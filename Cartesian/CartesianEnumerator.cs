@@ -12,10 +12,10 @@ namespace Cartesian
 
 		public CartesianEnumerator(IEnumerable<TDimension> dimensions, bool useCache = true)
 		{
-			Func<IEnumerable<TElement>, IEnumerator<TElement>> getEnumerator = useCache ?
-				new Func<IEnumerable<TElement>, IEnumerator<TElement>>((e) => new CachingEnumerator<TElement>(e.GetEnumerator())) :
+			Func<TDimension, IEnumerator<TElement>> getEnumerator = useCache ?
+				new Func<TDimension, IEnumerator<TElement>>((e) => new CachingEnumerator<TElement>(e.GetEnumerator())) :
 				(e) => e.GetEnumerator();
-			_dimensionsEnumerators = dimensions.Select(d => getEnumerator(d)).ToArray();
+			_dimensionsEnumerators = dimensions.Select(getEnumerator).ToArray();
 			foreach (var enumerator in _dimensionsEnumerators.Skip(1))
 				if (!enumerator.MoveNext())
 					throw new InvalidOperationException();
